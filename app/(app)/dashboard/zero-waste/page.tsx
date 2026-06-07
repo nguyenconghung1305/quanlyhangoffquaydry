@@ -1,4 +1,4 @@
-import { DashboardGrid } from "@/components/dashboard-grid";
+import { ZeroWasteDashboardGrid } from "@/components/zero-waste-dashboard-grid";
 import { filterByBucket } from "@/lib/buckets";
 import { getProducts } from "@/lib/products";
 
@@ -10,11 +10,11 @@ export default async function ZeroWastePage() {
       <div>
         <h1 className="page-title">Zero waste</h1>
         <p className="page-desc">
-          Sản phẩm còn 1–4 ngày — dán nhãn zero waste ({products.length} mặt
-          hàng)
+          Sản phẩm còn 1–4 ngày ({products.length} mặt hàng). Gạt sang phải
+          khi đã dán nhãn (vừa chuyển từ off 30%).
         </p>
       </div>
-      <DashboardGrid
+      <ZeroWasteDashboardGrid
         products={products}
         emptyMessage="Không có sản phẩm cần dán zero waste."
       />

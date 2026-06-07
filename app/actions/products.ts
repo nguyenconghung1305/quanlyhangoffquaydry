@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getProductBucket } from "@/lib/buckets";
+import { resolveLabelFlagsOnExpiryChange } from "@/lib/product-label-flags";
 import { createClient } from "@/lib/supabase/server";
 import type { ProductFormData } from "@/lib/types";
 
@@ -66,21 +66,16 @@ export async function updateProduct(
 
   const { data: existing } = await supabase
     .from("products")
-    .select("expiry_date, off_30_labeled")
+    .select(
+      "expiry_date, off_30_labeled, zero_waste_labeled, expired_collected"
+    )
     .eq("id", id)
     .single();
 
-  const oldBucket = existing
-    ? getProductBucket(existing.expiry_date)
-    : null;
-  const newBucket = getProductBucket(data.expiry_date);
-
-  let off_30_labeled = Boolean(existing?.off_30_labeled);
-  if (newBucket === "off_30" && oldBucket !== "off_30") {
-    off_30_labeled = false;
-  } else if (newBucket !== "off_30") {
-    off_30_labeled = false;
-  }
+  const labelFlags = resolveLabelFlagsOnExpiryChange(
+    existing ?? null,
+    data.expiry_date
+  );
 
   const { error } = await supabase
     .from("products")
@@ -90,7 +85,7 @@ export async function updateProduct(
       price: data.price,
       quantity: data.quantity,
       expiry_date: data.expiry_date,
-      off_30_labeled,
+      ...labelFlags,
     })
     .eq("id", id);
 
@@ -107,11 +102,33 @@ export async function setOff30Labeled(
   id: string,
   labeled: boolean
 ): Promise<ActionResult> {
+  return setLabelField(id, "off_30_labeled", labeled);
+}
+
+export async function setZeroWasteLabeled(
+  id: string,
+  labeled: boolean
+): Promise<ActionResult> {
+  return setLabelField(id, "zero_waste_labeled", labeled);
+}
+
+export async function setExpiredCollected(
+  id: string,
+  collected: boolean
+): Promise<ActionResult> {
+  return setLabelField(id, "expired_collected", collected);
+}
+
+async function setLabelField(
+  id: string,
+  field: "off_30_labeled" | "zero_waste_labeled" | "expired_collected",
+  value: boolean
+): Promise<ActionResult> {
   const supabase = await createClient();
 
   const { error } = await supabase
     .from("products")
-    .update({ off_30_labeled: labeled })
+    .update({ [field]: value })
     .eq("id", id);
 
   if (error) return { error: error.message };

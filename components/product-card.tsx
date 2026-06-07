@@ -1,5 +1,13 @@
+import {
+  setExpiredCollected,
+  setOff30Labeled,
+  setZeroWasteLabeled,
+} from "@/app/actions/products";
 import { DeleteProductButton } from "@/components/delete-product-button";
-import { Off30LabelSwitch } from "@/components/off-30-label-switch";
+import {
+  getPendingRingClass,
+  LabelToggleSwitch,
+} from "@/components/label-toggle-switch";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -19,12 +27,16 @@ type ProductCardProps = {
   product: Product;
   showDelete?: boolean;
   showOff30LabelSwitch?: boolean;
+  showZeroWasteLabelSwitch?: boolean;
+  showExpiredCollectedSwitch?: boolean;
 };
 
 export function ProductCard({
   product,
   showDelete = false,
   showOff30LabelSwitch = false,
+  showZeroWasteLabelSwitch = false,
+  showExpiredCollectedSwitch = false,
 }: ProductCardProps) {
   const daysRemaining = getDaysRemaining(product.expiry_date);
   const bucket = getProductBucket(product.expiry_date);
@@ -33,16 +45,27 @@ export function ProductCard({
     ? getZeroWasteStickerAmount(product.price)
     : null;
 
-  const needsRelabel = showOff30LabelSwitch && !product.off_30_labeled;
+  const needsOff30 = showOff30LabelSwitch && !product.off_30_labeled;
+  const needsZeroWaste =
+    showZeroWasteLabelSwitch && !product.zero_waste_labeled;
+  const needsExpiredCollect =
+    showExpiredCollectedSwitch && !product.expired_collected;
+
+  const isDone =
+    (showOff30LabelSwitch && product.off_30_labeled) ||
+    (showZeroWasteLabelSwitch && product.zero_waste_labeled) ||
+    (showExpiredCollectedSwitch && product.expired_collected);
 
   return (
     <Card
       className={cn(
         "flex h-full flex-col border-2 shadow-md transition-shadow hover:shadow-lg",
-        needsRelabel && "ring-2 ring-orange-400 ring-offset-2",
-        showOff30LabelSwitch &&
-          product.off_30_labeled &&
-          "border-green-300/80 bg-green-50/30"
+        needsOff30 && `ring-2 ${getPendingRingClass("off30")} ring-offset-2`,
+        needsZeroWaste &&
+          `ring-2 ${getPendingRingClass("zeroWaste")} ring-offset-2`,
+        needsExpiredCollect &&
+          `ring-2 ${getPendingRingClass("expired")} ring-offset-2`,
+        isDone && "border-green-300/80 bg-green-50/30"
       )}
     >
       <CardHeader className="pb-3">
@@ -96,12 +119,33 @@ export function ProductCard({
           </p>
         )}
       </CardContent>
-      {(showOff30LabelSwitch || showDelete) && (
+      {(showOff30LabelSwitch ||
+        showZeroWasteLabelSwitch ||
+        showExpiredCollectedSwitch ||
+        showDelete) && (
         <CardFooter className="flex flex-col gap-3 border-t bg-muted/30 pt-4">
           {showOff30LabelSwitch && (
-            <Off30LabelSwitch
+            <LabelToggleSwitch
               productId={product.id}
               labeled={product.off_30_labeled}
+              kind="off30"
+              onToggle={setOff30Labeled}
+            />
+          )}
+          {showZeroWasteLabelSwitch && (
+            <LabelToggleSwitch
+              productId={product.id}
+              labeled={product.zero_waste_labeled}
+              kind="zeroWaste"
+              onToggle={setZeroWasteLabeled}
+            />
+          )}
+          {showExpiredCollectedSwitch && (
+            <LabelToggleSwitch
+              productId={product.id}
+              labeled={product.expired_collected}
+              kind="expired"
+              onToggle={setExpiredCollected}
             />
           )}
           {showDelete && (

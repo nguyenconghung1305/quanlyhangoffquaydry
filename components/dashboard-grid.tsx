@@ -23,3 +23,4 @@ export function DashboardGrid({ products, emptyMessage }: DashboardGridProps) {
     </div>
   );
 }
+

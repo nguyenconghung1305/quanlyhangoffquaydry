@@ -24,6 +24,7 @@ Website quản lý hàng off trên kệ: thêm/sửa/xóa sản phẩm và tự 
 2. Vào **SQL Editor** → chạy lần lượt:
    - [`supabase/migrations/001_products.sql`](supabase/migrations/001_products.sql)
    - [`supabase/migrations/002_off_30_labeled.sql`](supabase/migrations/002_off_30_labeled.sql)
+   - [`supabase/migrations/003_zero_waste_expired_labels.sql`](supabase/migrations/003_zero_waste_expired_labels.sql)
 3. Vào **Project Settings → API** → copy `Project URL` và `anon public` key.
 
 ### 2. Biến môi trường

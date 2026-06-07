@@ -9,6 +9,8 @@ export type Product = {
   updated_at: string;
   created_by: string | null;
   off_30_labeled: boolean;
+  zero_waste_labeled: boolean;
+  expired_collected: boolean;
 };
 
 export type ProductFormData = {

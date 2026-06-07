@@ -19,13 +19,16 @@ import type { Product } from "@/lib/types";
 
 type ProductsTableProps = {
   products: Product[];
+  query?: string;
 };
 
-export function ProductsTable({ products }: ProductsTableProps) {
+export function ProductsTable({ products, query = "" }: ProductsTableProps) {
   if (products.length === 0) {
     return (
       <p className="rounded-2xl border-2 border-dashed bg-white/60 p-10 text-center text-lg text-muted-foreground">
-        Chưa có sản phẩm. Nhấn &quot;Thêm sản phẩm&quot; để bắt đầu.
+        {query
+          ? `Không tìm thấy sản phẩm cho "${query}".`
+          : 'Chưa có sản phẩm. Nhấn "Thêm sản phẩm" để bắt đầu.'}
       </p>
     );
   }

@@ -1,5 +1,5 @@
 import { ProductFormDialog } from "@/components/product-form-dialog";
-import { ProductsTable } from "@/components/products-table";
+import { ProductsList } from "@/components/products-list";
 import { getProducts } from "@/lib/products";
 
 export default async function ProductsPage() {
@@ -11,12 +11,12 @@ export default async function ProductsPage() {
         <div>
           <h1 className="page-title">Quản lý sản phẩm</h1>
           <p className="page-desc">
-            Thêm, sửa, xóa sản phẩm — bao gồm cả hàng còn trên 45 ngày.
+            Thêm, sửa, xóa sản phẩm — tìm theo tên hoặc mã.
           </p>
         </div>
         <ProductFormDialog />
       </div>
-      <ProductsTable products={products} />
+      <ProductsList products={products} />
     </div>
   );
 }
