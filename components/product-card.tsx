@@ -1,13 +1,7 @@
-import {
-  setExpiredCollected,
-  setOff30Labeled,
-  setZeroWasteLabeled,
-} from "@/app/actions/products";
+"use client";
+
 import { DeleteProductButton } from "@/components/delete-product-button";
-import {
-  getPendingRingClass,
-  LabelToggleSwitch,
-} from "@/components/label-toggle-switch";
+import { LabelToggleSwitch } from "@/components/label-toggle-switch";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -20,6 +14,7 @@ import {
 import { getDaysRemaining, getProductBucket } from "@/lib/buckets";
 import { formatDate, formatPrice } from "@/lib/format";
 import { getZeroWasteStickerAmount } from "@/lib/zero-waste-sticker";
+import { getPendingRingClass } from "@/lib/label-toggle-config";
 import type { Product } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -129,7 +124,6 @@ export function ProductCard({
               productId={product.id}
               labeled={product.off_30_labeled}
               kind="off30"
-              onToggle={setOff30Labeled}
             />
           )}
           {showZeroWasteLabelSwitch && (
@@ -137,7 +131,6 @@ export function ProductCard({
               productId={product.id}
               labeled={product.zero_waste_labeled}
               kind="zeroWaste"
-              onToggle={setZeroWasteLabeled}
             />
           )}
           {showExpiredCollectedSwitch && (
@@ -145,7 +138,6 @@ export function ProductCard({
               productId={product.id}
               labeled={product.expired_collected}
               kind="expired"
-              onToggle={setExpiredCollected}
             />
           )}
           {showDelete && (
