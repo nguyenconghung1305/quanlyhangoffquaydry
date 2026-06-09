@@ -133,7 +133,7 @@ async function setLabelField(
 
   if (error) return { error: error.message };
 
-  revalidateProductPaths();
+  // No revalidate — toggle updates in place; sort on next page load only
   return { success: true };
 }
 

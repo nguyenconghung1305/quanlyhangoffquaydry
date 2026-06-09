@@ -20,9 +20,14 @@ import type { Product } from "@/lib/types";
 type ProductsTableProps = {
   products: Product[];
   query?: string;
+  onProductDeleted?: (id: string) => void;
 };
 
-export function ProductsTable({ products, query = "" }: ProductsTableProps) {
+export function ProductsTable({
+  products,
+  query = "",
+  onProductDeleted,
+}: ProductsTableProps) {
   if (products.length === 0) {
     return (
       <p className="rounded-2xl border-2 border-dashed bg-white/60 p-10 text-center text-lg text-muted-foreground">
@@ -72,6 +77,7 @@ export function ProductsTable({ products, query = "" }: ProductsTableProps) {
                     <DeleteProductButton
                       id={product.id}
                       productName={product.name}
+                      onDeleted={() => onProductDeleted?.(product.id)}
                     />
                   </div>
                 </TableCell>

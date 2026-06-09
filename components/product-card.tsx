@@ -24,6 +24,8 @@ type ProductCardProps = {
   showOff30LabelSwitch?: boolean;
   showZeroWasteLabelSwitch?: boolean;
   showExpiredCollectedSwitch?: boolean;
+  onLabelChange?: (labeled: boolean) => void;
+  onDelete?: () => void;
 };
 
 export function ProductCard({
@@ -32,6 +34,8 @@ export function ProductCard({
   showOff30LabelSwitch = false,
   showZeroWasteLabelSwitch = false,
   showExpiredCollectedSwitch = false,
+  onLabelChange,
+  onDelete,
 }: ProductCardProps) {
   const daysRemaining = getDaysRemaining(product.expiry_date);
   const bucket = getProductBucket(product.expiry_date);
@@ -124,6 +128,7 @@ export function ProductCard({
               productId={product.id}
               labeled={product.off_30_labeled}
               kind="off30"
+              onLabeledChange={onLabelChange}
             />
           )}
           {showZeroWasteLabelSwitch && (
@@ -131,6 +136,7 @@ export function ProductCard({
               productId={product.id}
               labeled={product.zero_waste_labeled}
               kind="zeroWaste"
+              onLabeledChange={onLabelChange}
             />
           )}
           {showExpiredCollectedSwitch && (
@@ -138,6 +144,7 @@ export function ProductCard({
               productId={product.id}
               labeled={product.expired_collected}
               kind="expired"
+              onLabeledChange={onLabelChange}
             />
           )}
           {showDelete && (
@@ -145,6 +152,7 @@ export function ProductCard({
               id={product.id}
               productName={product.name}
               className="w-full"
+              onDeleted={onDelete}
             />
           )}
         </CardFooter>

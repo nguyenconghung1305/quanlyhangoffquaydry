@@ -17,6 +17,7 @@ type LabelToggleSwitchProps = {
   productId: string;
   labeled: boolean;
   kind: LabelToggleKind;
+  onLabeledChange?: (labeled: boolean) => void;
 };
 
 const ACTIONS = {
@@ -29,6 +30,7 @@ export function LabelToggleSwitch({
   productId,
   labeled: initialLabeled,
   kind,
+  onLabeledChange,
 }: LabelToggleSwitchProps) {
   const cfg = LABEL_TOGGLE_CONFIG[kind];
   const onToggle = ACTIONS[kind];
@@ -41,10 +43,14 @@ export function LabelToggleSwitch({
 
   function handleToggle() {
     const next = !labeled;
+    setLabeled(next);
+    onLabeledChange?.(next);
     startTransition(async () => {
-      setLabeled(next);
       const result = await onToggle(productId, next);
-      if (result.error) setLabeled(!next);
+      if (result.error) {
+        setLabeled(!next);
+        onLabeledChange?.(!next);
+      }
     });
   }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { deleteProduct } from "@/app/actions/products";
 import { Button } from "@/components/ui/button";
@@ -10,13 +11,16 @@ type DeleteProductButtonProps = {
   id: string;
   productName: string;
   className?: string;
+  onDeleted?: () => void;
 };
 
 export function DeleteProductButton({
   id,
   productName,
   className,
+  onDeleted,
 }: DeleteProductButtonProps) {
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
 
   function handleDelete() {
@@ -25,8 +29,14 @@ export function DeleteProductButton({
     );
     if (!confirmed) return;
 
+    onDeleted?.();
+
     startTransition(async () => {
-      await deleteProduct(id);
+      const result = await deleteProduct(id);
+      if (result.error) {
+        window.alert(result.error);
+        router.refresh();
+      }
     });
   }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ProductsTable } from "@/components/products-table";
 import { Input } from "@/components/ui/input";
 import type { Product } from "@/lib/types";
@@ -12,16 +12,25 @@ type ProductsListProps = {
 
 export function ProductsList({ products }: ProductsListProps) {
   const [query, setQuery] = useState("");
+  const [items, setItems] = useState(products);
+
+  useEffect(() => {
+    setItems(products);
+  }, [products]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return products;
-    return products.filter(
+    if (!q) return items;
+    return items.filter(
       (p) =>
         p.name.toLowerCase().includes(q) ||
         p.sku.toLowerCase().includes(q)
     );
-  }, [products, query]);
+  }, [items, query]);
+
+  function handleDelete(productId: string) {
+    setItems((prev) => prev.filter((p) => p.id !== productId));
+  }
 
   return (
     <div className="space-y-4">
@@ -37,10 +46,14 @@ export function ProductsList({ products }: ProductsListProps) {
       </div>
       {query.trim() && (
         <p className="text-base text-muted-foreground">
-          {filtered.length} / {products.length} sản phẩm
+          {filtered.length} / {items.length} sản phẩm
         </p>
       )}
-      <ProductsTable products={filtered} query={query.trim()} />
+      <ProductsTable
+        products={filtered}
+        query={query.trim()}
+        onProductDeleted={handleDelete}
+      />
     </div>
   );
 }
